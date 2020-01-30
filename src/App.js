@@ -1,18 +1,26 @@
 import React, { useState } from "react";
+import useSocket from "use-socket.io-client";
 import "./index.css";
 
 export default () => {
   const [id, setId] = useState("");
-  const [nameINput, setNameInput] = useState("");
+  const [nameInput, setNameInput] = useState("");
   const [room, setRoom] = useState("");
+
+  const [socket] = useSocket("<https://open-chat-naostsaecf.now.sh>");
+  socket.connect();
+  console.log(socket);
 
   const handleSubmit = e => {
     e.preventDefault();
+    const name = document.querySelector('#name').value.trim();
+    const room_value = document.querySelector('#room').value.trim();
+    console.log(name);
     if (!nameInput) {
       return alert("Name can't be empty");
     }
     setId(name);
-    WebSocket.emit("join", name, room);
+    socket.emit("join", name, room);
   };
 
   return id !== "" ? (
@@ -24,7 +32,7 @@ export default () => {
           id="name"
           onChange={e => setNameInput(e.target.value.trim())}
           required
-          placedholder="What is your name?"
+          placeholder="What is your name?"
           />
           <br />
           <input
